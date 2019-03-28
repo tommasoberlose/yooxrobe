@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Boilerplate</string>
+
+    <string name="connection_error_message">Connection error.</string>
+    <string name="server_error_message">Ops, something went wrong.</string>
+    <string name="error_opening_uri">Error opening URL: Link copied to clipboard.</string>
+</resources>
