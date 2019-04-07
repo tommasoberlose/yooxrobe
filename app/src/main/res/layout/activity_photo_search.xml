@@ -90,4 +90,27 @@
 
     </com.google.android.material.card.MaterialCardView>
 
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:behavior_hideable="true"
+            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+            app:behavior_peekHeight="0dp"
+            android:id="@+id/bottom_list"
+            android:orientation="vertical">
+        <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:layoutAnimation="@anim/layout_animation_swipe_up"
+                android:transitionGroup="false"
+                android:clipChildren="false"
+                android:visibility="gone"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:id="@+id/list" />
+    </LinearLayout>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

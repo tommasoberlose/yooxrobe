@@ -13,7 +13,7 @@ class PhotoSearchViewModel : ViewModel() {
 
     init {
         image_uri.value = null
-        results.value = null
+        results.value = ArrayList()
         uploading.value = false
     }
 
@@ -28,7 +28,7 @@ class PhotoSearchViewModel : ViewModel() {
     }
 
     fun clearResults() {
-        results.value = null
+        results.value = ArrayList()
     }
 
     fun clearImageURI() {

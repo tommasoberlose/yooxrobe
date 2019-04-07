@@ -27,6 +27,9 @@ import it.yoox.yooxrobe.ui.viewmodels.PhotoSearchViewModel
 import kotlinx.android.synthetic.main.activity_photo_search.*
 import java.io.ByteArrayOutputStream
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -35,17 +38,35 @@ import org.greenrobot.eventbus.EventBus
 import java.util.*
 import it.yoox.yooxrobe.network.NetworkAdapter
 import it.yoox.yooxrobe.util.NetworkUtil
+import net.idik.lib.slimadapter.SlimAdapter
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class PhotoSearchActivity : AppCompatActivity(), LifecycleOwner{
 
     lateinit var viewModel: PhotoSearchViewModel
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
+    private lateinit var adapter: SlimAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_photo_search)
 
         viewModel = ViewModelProviders.of(this).get(PhotoSearchViewModel::class.java)
+
+        BottomSheetBehavior.from(bottom_list).state = BottomSheetBehavior.STATE_HIDDEN
+
+        list.layoutManager = GridLayoutManager(this, 2)
+        adapter = SlimAdapter.create()
+        adapter
+            .register<Item>(R.layout.item_layout) { item, injector ->
+                injector
+                    .text(R.id.label, "${item.data["label"]}")
+                    .text(R.id.main_category, "${item.data["mainCategory"]}")
+                    .text(R.id.full_price, "${item.data["currency"]} ${item.data["fullPrice"]}")
+                    .text(R.id.retail_price, "${item.data["currency"]} ${item.data["retailPrice"]}")
+            }
+            .attachTo(list)
 
         action_open_gallery.setOnClickListener {
             openGallery()
@@ -74,32 +95,45 @@ class PhotoSearchActivity : AppCompatActivity(), LifecycleOwner{
 
         action_search.setOnClickListener {
             val cropped = cropImageView.croppedImage
-            val resizedBitmap = resizeBitmap(cropped, 1024, 1024)
-
             viewModel.startUploading()
-            compositeDisposable.add(
-                NetworkAdapter(this).upload(resizedBitmap)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({ result ->
-                        if (result.isSuccessful) {
-                            viewModel.stopUploading()
-                            Log.d("yoox", Gson().toJson(result.body()))
-                            // viewModel.setResults(result.body())
-                        } else {
-                            NetworkUtil.handleNetworkError(this, result.errorBody())
-                            viewModel.stopUploading()
-                        }
-                    }, {
-                        viewModel.stopUploading()
-                        Toast.makeText(this, getString(R.string.connection_error_message), Toast.LENGTH_SHORT).show()
-                    }
-                    )
-            )
+            val array = ArrayList<HashMap<String, Any>>()
+            val item = HashMap<String, Any>()
+            item["label"] = "Item"
+            item["mainCategory"] = "Coltmar"
+            item["price"] = HashMap<String, Any>().apply { this["currency"] = "EUR"; this["fullPrice"] = 180; this["retailPrice"] = 140  }
+            for (i in 0..10) {
+                array.add(item)
+            }
+            viewModel.stopUploading()
+            viewModel.setResults(array)
+//            compositeDisposable.add(
+//                NetworkAdapter(this).upload(resizedBitmap)
+//                    .subscribeOn(Schedulers.io())
+//                    .observeOn(AndroidSchedulers.mainThread())
+//                    .subscribe({ result ->
+//                        if (result.isSuccessful) {
+//                            viewModel.stopUploading()
+//                            Log.d("yoox", Gson().toJson(result.body()))
+//                            // viewModel.setResults(result.body())
+//                        } else {
+//                            NetworkUtil.handleNetworkError(this, result.errorBody())
+//                            viewModel.stopUploading()
+//                        }
+//                    }, {
+//                        viewModel.stopUploading()
+//                        Toast.makeText(this, getString(R.string.connection_error_message), Toast.LENGTH_SHORT).show()
+//                    }
+//                    )
+//            )
         }
 
         viewModel.uploading.observe(this, Observer {
             loader.isVisible = it
+        })
+
+        viewModel.results.observe(this, Observer {
+//            adapter.updateData(it.map { i -> Item(i) })
+//            BottomSheetBehavior.from(bottom_list).state = if (it.size > 0) BottomSheetBehavior.STATE_EXPANDED else BottomSheetBehavior.STATE_HIDDEN
         })
     }
 
@@ -135,7 +169,7 @@ class PhotoSearchActivity : AppCompatActivity(), LifecycleOwner{
         } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) { //data from camera
             val extras = data?.extras
             val imageBitmap = extras!!.get("data") as Bitmap
-            viewModel.setImageURI(getImageUri(this@PhotoSearchActivity, imageBitmap))
+            viewModel.setImageURI(getImageUri(this@PhotoSearchActivity, resizeBitmap(imageBitmap, 1024, 1024)))
         }
     }
 
@@ -155,7 +189,7 @@ class PhotoSearchActivity : AppCompatActivity(), LifecycleOwner{
     override fun onBackPressed() {
 
         when {
-            viewModel.results.value != null -> viewModel.clearResults()
+            viewModel.results.value!!.size > 0 -> viewModel.clearResults()
             viewModel.image_uri.value != null -> viewModel.clearImageURI()
             else -> {
                 super.onBackPressed()
@@ -173,5 +207,7 @@ class PhotoSearchActivity : AppCompatActivity(), LifecycleOwner{
         private val PICK_IMAGE = 1
         private val REQUEST_IMAGE_CAPTURE = 2
     }
+
+    data class Item(var data: HashMap<String, Any>)
 
 }

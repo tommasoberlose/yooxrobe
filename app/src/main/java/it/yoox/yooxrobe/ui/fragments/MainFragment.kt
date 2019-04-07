@@ -48,29 +48,7 @@ class MainFragment : Fragment() {
             startActivity(Intent(requireActivity(), PhotoSearchActivity::class.java))
         }
 
-        // Search for the map fragment to finish setup by calling init().
-        val mapFragment = fragmentManager!!.findFragmentById(R.id.mapfragment) as SupportMapFragment?
 
-        mapFragment?.init { error ->
-            if (error == OnEngineInitListener.Error.NONE) {
-                // retrieve a reference of the map from the map fragment
-                val map = mapFragment.map
-//                val lm = activity?.getSystemService(Context.LOCATION_SERVICE) as LocationManager?
-//                lm?.let {
-//                    val location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-//                    val longitude = location.longitude
-//                    val latitude = location.latitude
-//                }
-                map.setCenter(
-                    GeoCoordinate(45.0540977,7.6835563, 0.0),
-                    Map.Animation.NONE
-                )
-                // Set the zoom level to the average between min and max
-                map.zoomLevel = (map.maxZoomLevel + map.minZoomLevel) / 2
-            } else {
-                println("ERROR: Cannot initialize Map Fragment")
-            }
-        } ?: Log.d("here", "Error!!")
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
