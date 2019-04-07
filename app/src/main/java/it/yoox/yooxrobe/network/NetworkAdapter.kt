@@ -20,6 +20,15 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import kotlin.collections.HashMap
 import com.google.android.gms.common.util.IOUtils.toByteArray
 import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import com.here.sdk.analytics.a.e
+import okhttp3.MultipartBody
+import com.here.android.mpa.internal.f
+import okhttp3.MediaType
+import okhttp3.RequestBody
+
+
 
 
 class NetworkAdapter(private val context: Context) {
@@ -47,12 +56,16 @@ class NetworkAdapter(private val context: Context) {
     }
 
     fun upload(bitmap: Bitmap): Single<Response<HashMap<String, Any>>> {
-        return apiService.upload(HashMap<String, Any>().apply {
-            val baos = ByteArrayOutputStream()
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-            val imageBytes = baos.toByteArray()
-            val encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT)
-            this["image"] = encodedImage
-        })
+        val file = File(context.cacheDir, "photo.jpeg")
+
+        val fOut = FileOutputStream(file)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 70, fOut)
+        fOut.flush()
+        fOut.close()
+
+        val reqFile = RequestBody.create(MediaType.parse("image/jpeg"), file)
+        val body = MultipartBody.Part.createFormData("image", "photo.jpeg", reqFile)
+
+        return apiService.upload(body)
     }
 }

@@ -47,8 +47,6 @@ class MainFragment : Fragment() {
         action_photo_search.setOnClickListener {
             startActivity(Intent(requireActivity(), PhotoSearchActivity::class.java))
         }
-
-
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

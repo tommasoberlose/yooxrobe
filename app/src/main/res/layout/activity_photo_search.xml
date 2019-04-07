@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout android:layout_width="wrap_content"
-                                                     android:layout_height="wrap_content"
+<androidx.coordinatorlayout.widget.CoordinatorLayout android:layout_width="match_parent"
+                                                     android:layout_height="match_parent"
                                                      xmlns:android="http://schemas.android.com/apk/res/android"
                                                      xmlns:app="http://schemas.android.com/apk/res-auto">
     <RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent">
@@ -80,22 +80,12 @@
         </RelativeLayout>
     </RelativeLayout>
 
-
-
     <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:cardBackgroundColor="@android:color/white"
-            app:layout_behavior="@string/bottom_sheet_behavior">
-
-    </com.google.android.material.card.MaterialCardView>
-
-
-    <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:behavior_hideable="true"
+            app:cardCornerRadius="8dp"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
             app:behavior_peekHeight="0dp"
             android:id="@+id/bottom_list"
@@ -107,10 +97,10 @@
                 android:layoutAnimation="@anim/layout_animation_swipe_up"
                 android:transitionGroup="false"
                 android:clipChildren="false"
-                android:visibility="gone"
-                android:paddingTop="16dp"
-                android:paddingBottom="16dp"
+                android:paddingTop="32dp"
+                android:paddingBottom="32dp"
                 android:id="@+id/list" />
-    </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

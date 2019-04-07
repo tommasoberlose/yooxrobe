@@ -1,24 +1,17 @@
 package it.yoox.yooxrobe.ui.activities
 
-import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.Matrix
-import android.graphics.RectF
+import android.graphics.Paint
 import android.net.Uri
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.provider.MediaStore
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
 import android.widget.ImageView
-import android.widget.Toast
-import androidx.annotation.NonNull
-import androidx.core.app.ActivityCompat
+import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProviders
@@ -28,16 +21,11 @@ import kotlinx.android.synthetic.main.activity_photo_search.*
 import java.io.ByteArrayOutputStream
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.gson.Gson
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
-import org.greenrobot.eventbus.EventBus
-import java.util.*
-import it.yoox.yooxrobe.network.NetworkAdapter
-import it.yoox.yooxrobe.util.NetworkUtil
+import it.yoox.yooxrobe.models.YOOXItem
 import net.idik.lib.slimadapter.SlimAdapter
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -56,15 +44,26 @@ class PhotoSearchActivity : AppCompatActivity(), LifecycleOwner{
 
         BottomSheetBehavior.from(bottom_list).state = BottomSheetBehavior.STATE_HIDDEN
 
-        list.layoutManager = GridLayoutManager(this, 2)
+        list.layoutManager = GridLayoutManager(this, 2) as RecyclerView.LayoutManager?
         adapter = SlimAdapter.create()
         adapter
-            .register<Item>(R.layout.item_layout) { item, injector ->
+            .register<YOOXItem>(R.layout.item_layout) { item, injector ->
                 injector
-                    .text(R.id.label, "${item.data["label"]}")
-                    .text(R.id.main_category, "${item.data["mainCategory"]}")
-                    .text(R.id.full_price, "${item.data["currency"]} ${item.data["fullPrice"]}")
-                    .text(R.id.retail_price, "${item.data["currency"]} ${item.data["retailPrice"]}")
+                    .text(R.id.label, item.label)
+                    .text(R.id.main_category, "CIAO")
+                    .text(R.id.full_price, "${item.categories[0].products[0].price["currency"]} ${item.categories[0].products[0].price["fullPrice"]}")
+                    .text(R.id.retail_price, "${item.categories[0].products[0].price["currency"]} ${item.categories[0].products[0].price["retailPrice"]}")
+                    .with<TextView>(R.id.full_price) {
+                        it.paintFlags = it.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                    }
+                    .with<ImageView>(R.id.image) {
+                        Log.d("yoox", item.categories[0].products[0].images[0]["urlTemplate"])
+                        Glide
+                            .with(this)
+                            .load(item.categories[0].products[0].images[0]["urlTemplate"])
+                            .centerCrop()
+                            .into(it)
+                    }
             }
             .attachTo(list)
 
@@ -96,18 +95,27 @@ class PhotoSearchActivity : AppCompatActivity(), LifecycleOwner{
         action_search.setOnClickListener {
             val cropped = cropImageView.croppedImage
             viewModel.startUploading()
-            val array = ArrayList<HashMap<String, Any>>()
-            val item = HashMap<String, Any>()
-            item["label"] = "Item"
-            item["mainCategory"] = "Coltmar"
-            item["price"] = HashMap<String, Any>().apply { this["currency"] = "EUR"; this["fullPrice"] = 180; this["retailPrice"] = 140  }
-            for (i in 0..10) {
-                array.add(item)
-            }
-            viewModel.stopUploading()
-            viewModel.setResults(array)
+
+            val array = ArrayList<YOOXItem>()
+            array.add(YOOXItem("Logo-Print Fleece-Back Cotton-Jersey Hoodie", "sweatshirt", 165L, 165f, "http://ypic.yoox.biz/ypic/mrp/-resize/640x480/in/1113675.jpg"))
+            array.add(YOOXItem("Acid-Wash Fleeceback Cotton-Jersey Hoodie", "sweatshirt", 230L, 230f, "http://ypic.yoox.biz/ypic/mrp/-resize/640x480/in/1109054.jpg"))
+            array.add(YOOXItem("Loopback Cotton-Jersey Hoodie", "sweatshirt", 100L, 100f, "http://ypic.yoox.biz/ypic/mrp/-resize/640x480/in/1066154.jpg"))
+            array.add(YOOXItem("Steel grey Sweatshirt", "sweatshirt", 339L, 264f, "http://ypic.yoox.biz/ypic/yoox/-resize/640x480/f/12186027VI.jpg"))
+            array.add(YOOXItem("Grey Sweatshirt", "sweatshirt", 124L, 124f, "http://ypic.yoox.biz/ypic/yoox/-resize/640x480/f/12226528XG.jpg"))
+            array.add(YOOXItem("Cloud Oversized Loopback Cotton-Jersey Hoodie", "sweatshirt", 315L, 315f, "http://ypic.yoox.biz/ypic/mrp/-resize/640x480/in/1103954.jpg"))
+            array.add(YOOXItem("LEAD SWEATSHIRT", "sweatshirt", 84L, 84f, "http://ypic.yoox.biz/ypic/yoox/-resize/640x480/f/12277849GF.jpg"))
+            array.add(YOOXItem("Logo-Embroidered Cotton-Jersey Hoodie", "sweatshirt", 315L, 315f, "http://ypic.yoox.biz/ypic/mrp/-resize/640x480/in/1088068.jpg"))
+            array.add(YOOXItem("BLACK SWEATSHIRT", "sweatshirt", 319L, 319f, "http://ypic.yoox.biz/ypic/yoox/-resize/640x480/f/12276070JE.jpg"))
+            array.add(YOOXItem("GREY SWEATSHIRT", "sweatshirt", 48L, 48f, "http://ypic.yoox.biz/ypic/yoox/-resize/640x480/f/12237700VQ.jpg"))
+            array.add(YOOXItem("Printed Fleece-Back Cotton-Jersey Hoodie", "sweatshirt", 380L, 380f, "http://ypic.yoox.biz/ypic/mrp/-resize/640x480/in/1108931.jpg"))
+            array.add(YOOXItem("Grey Synthetic Down Jacket", "jacket", 109L, 109f, "http://ypic.yoox.biz/ypic/yoox/-resize/640x480/f/41868206AU.jpg"))
+
+            Handler().postDelayed({
+                viewModel.stopUploading()
+                viewModel.setResults(array)
+            }, 500)
 //            compositeDisposable.add(
-//                NetworkAdapter(this).upload(resizedBitmap)
+//                NetworkAdapter(this).upload(cropped)
 //                    .subscribeOn(Schedulers.io())
 //                    .observeOn(AndroidSchedulers.mainThread())
 //                    .subscribe({ result ->
@@ -120,6 +128,7 @@ class PhotoSearchActivity : AppCompatActivity(), LifecycleOwner{
 //                            viewModel.stopUploading()
 //                        }
 //                    }, {
+//                        it.printStackTrace()
 //                        viewModel.stopUploading()
 //                        Toast.makeText(this, getString(R.string.connection_error_message), Toast.LENGTH_SHORT).show()
 //                    }
@@ -132,8 +141,8 @@ class PhotoSearchActivity : AppCompatActivity(), LifecycleOwner{
         })
 
         viewModel.results.observe(this, Observer {
-//            adapter.updateData(it.map { i -> Item(i) })
-//            BottomSheetBehavior.from(bottom_list).state = if (it.size > 0) BottomSheetBehavior.STATE_EXPANDED else BottomSheetBehavior.STATE_HIDDEN
+            adapter.updateData(it)
+            BottomSheetBehavior.from(bottom_list).state = if (it.size > 0) BottomSheetBehavior.STATE_EXPANDED else BottomSheetBehavior.STATE_HIDDEN
         })
     }
 
@@ -207,7 +216,5 @@ class PhotoSearchActivity : AppCompatActivity(), LifecycleOwner{
         private val PICK_IMAGE = 1
         private val REQUEST_IMAGE_CAPTURE = 2
     }
-
-    data class Item(var data: HashMap<String, Any>)
 
 }

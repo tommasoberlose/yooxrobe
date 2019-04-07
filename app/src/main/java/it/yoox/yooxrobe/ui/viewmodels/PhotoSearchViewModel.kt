@@ -4,11 +4,12 @@ import android.graphics.Bitmap
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import it.yoox.yooxrobe.models.YOOXItem
 
 class PhotoSearchViewModel : ViewModel() {
 
     internal val image_uri: MutableLiveData<Uri> = MutableLiveData()
-    internal val results: MutableLiveData<ArrayList<HashMap<String, Any>>> = MutableLiveData()
+    internal val results: MutableLiveData<ArrayList<YOOXItem>> = MutableLiveData()
     internal val uploading: MutableLiveData<Boolean> = MutableLiveData()
 
     init {
@@ -23,7 +24,7 @@ class PhotoSearchViewModel : ViewModel() {
         }
     }
 
-    fun setResults(results: ArrayList<HashMap<String, Any>>) {
+    fun setResults(results: ArrayList<YOOXItem>) {
         this.results.value = results
     }
 

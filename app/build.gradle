@@ -40,7 +40,7 @@ android {
 
         release {
             debuggable false
-            buildConfigField "String", "URL_BASE_API", '""'
+            buildConfigField "String", "URL_BASE_API", '"http://ynappi-dev.azurewebsites.net/"'
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -96,4 +96,8 @@ dependencies {
     implementation(name: 'here_sdk', ext: 'aar')
 
     implementation 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
+
+    implementation 'com.github.pulvirentie.Sylvia:sylvia:0.0.3'
 }

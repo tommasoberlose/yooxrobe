@@ -5,9 +5,9 @@
               android:layout_height="wrap_content"
               android:padding="16dp"
             android:gravity="center">
-    <ImageView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="4dp" android:id="@+id/image"/>
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="8dp" android:id="@+id/label" android:fontFamily="@font/montserrat_semibold" android:textAllCaps="true"/>
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="8dp" android:id="@+id/main_category" android:fontFamily="@font/montserrat"/>
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="8dp" android:id="@+id/full_price" android:fontFamily="@font/montserrat_semibold" android:textAllCaps="true"/>
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="8dp" android:id="@+id/retail_price" android:fontFamily="@font/montserrat_semibold" android:textAllCaps="true"/>
+    <ImageView android:layout_width="128dp" android:layout_height="128dp" android:layout_marginBottom="4dp" android:id="@+id/image"/>
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="8dp" android:id="@+id/label" android:fontFamily="@font/montserrat_semibold" android:textAllCaps="true" android:text="ITEM 1" android:gravity="center"/>
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="8dp" android:id="@+id/main_category" android:fontFamily="@font/montserrat" android:layout_marginTop="-8dp" android:textSize="14sp" android:text="Coltmar"/>
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="4dp" android:id="@+id/full_price" android:fontFamily="@font/montserrat_semibold" android:textAllCaps="true" android:text="EUR 180"/>
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="4dp" android:id="@+id/retail_price" android:fontFamily="@font/montserrat_semibold" android:textAllCaps="true" android:text="EUR 150"/>
 </LinearLayout>
