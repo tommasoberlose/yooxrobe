@@ -11,19 +11,30 @@ apply plugin: 'realm-android'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "it.fancypixel.boilerplate"
-        minSdkVersion 21
+        applicationId "it.yoox.yooxrobe"
+        minSdkVersion 26
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    repositories {
+        flatDir {
+            dirs 'libs'
+        }
+    }
+
     buildTypes {
         debug {
             debuggable true
             minifyEnabled false
-            buildConfigField "String", "URL_BASE_API", '""'
+            buildConfigField "String", "URL_BASE_API", '"http://ynappi-dev.azurewebsites.net/"'
             versionNameSuffix '-DEBUG'
         }
 
@@ -81,4 +92,8 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'net.idik:slimadapter:2.1.2'
     implementation 'com.github.skydoves:powermenu:2.0.8'
+
+    implementation(name: 'here_sdk', ext: 'aar')
+
+    implementation 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
 }

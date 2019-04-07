@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/nav_graph" app:startDestination="@id/mainFragment">
+            xmlns:tools="http://schemas.android.com/tools" android:id="@+id/nav_graph" app:startDestination="@id/mainFragment">
 
-    <fragment android:id="@+id/mainFragment" android:name="it.fancypixel.boilerplate.ui.fragments.MainFragment"
+    <fragment android:id="@+id/mainFragment" android:name="it.yoox.yooxrobe.ui.fragments.MainFragment"
               android:label="MainFragment"/>
+    <fragment android:id="@+id/splashFragment" android:name="it.yoox.yooxrobe.ui.fragments.SplashFragment"
+              android:label="fragment_splash" tools:layout="@layout/fragment_splash">
+        <action android:id="@+id/action_explore" app:destination="@id/mainFragment"/>
+    </fragment>
 </navigation>
